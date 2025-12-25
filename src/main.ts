@@ -9,6 +9,7 @@ import { HideFilesSettingTab } from "./settings.js";
 export default class HideSpecifiedFilesPlugin extends Plugin {
   settings: Settings = cloneSettings(DEFAULT_SETTINGS);
   private hideFilesHandle: HideFilesHandle | null = null;
+  private ribbonIconEl: HTMLElement | null = null;
 
   async onload() {
     console.log("[Hide Files] Loading plugin...");
@@ -23,6 +24,9 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
         () => this.settings,
         () => this.saveSettings()
       );
+
+      // 添加侧边栏按钮
+      this.addRibbonIconButton();
 
       // 注册设置面板
       this.addSettingTab(new HideFilesSettingTab(this.app, this));
@@ -133,5 +137,31 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
     (this.settings as { enabled: boolean }).enabled = enabled;
     await this.saveSettings();
     this.hideFilesHandle?.refresh();
+    this.updateRibbonIcon();
+  }
+
+  /**
+   * 添加侧边栏 Ribbon Icon 按钮
+   */
+  private addRibbonIconButton(): void {
+    const iconName = this.settings.enabled ? "eye-off" : "eye";
+    this.ribbonIconEl = this.addRibbonIcon(
+      iconName,
+      "Toggle file hiding",
+      async (evt: MouseEvent) => {
+        await this.setEnabled(!this.settings.enabled);
+      }
+    );
+  }
+
+  /**
+   * 更新 Ribbon Icon 图标状态
+   */
+  private updateRibbonIcon(): void {
+    if (!this.ribbonIconEl) return;
+
+    // 简单方式：移除旧图标并重新创建
+    this.ribbonIconEl.remove();
+    this.addRibbonIconButton();
   }
 }
