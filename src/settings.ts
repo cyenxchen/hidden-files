@@ -34,7 +34,7 @@ export class HideFilesSettingTab extends PluginSettingTab {
       .setDesc("Toggle file hiding on/off")
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.enabled).onChange(async (value) => {
-          (this.plugin.settings as { enabled: boolean }).enabled = value;
+          this.plugin.settings.enabled = value;
           await this.plugin.saveSettings();
           refreshFileExplorer(this.app);
         })
@@ -81,7 +81,7 @@ export class HideFilesSettingTab extends PluginSettingTab {
           }
 
           // 添加到列表
-          (this.plugin.settings as { hiddenNames: string[] }).hiddenNames = [
+          this.plugin.settings.hiddenNames = [
             ...this.plugin.settings.hiddenNames,
             value,
           ];
@@ -118,7 +118,7 @@ export class HideFilesSettingTab extends PluginSettingTab {
 
         deleteBtn.addEventListener("click", async () => {
           // 从列表中移除
-          (this.plugin.settings as { hiddenNames: string[] }).hiddenNames =
+          this.plugin.settings.hiddenNames =
             this.plugin.settings.hiddenNames.filter((n) => n !== name);
 
           await this.plugin.saveSettings();

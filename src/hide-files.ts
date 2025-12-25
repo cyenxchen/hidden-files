@@ -1,4 +1,5 @@
-import type { App, EventRef, TAbstractFile, TFolder } from "obsidian";
+import { TFolder } from "obsidian";
+import type { App, EventRef, TAbstractFile } from "obsidian";
 import { around } from "monkey-around";
 import type { Settings } from "./settings-data.js";
 import type { FileExplorerItem, FileExplorerViewPrivate } from "./types.js";
@@ -185,7 +186,7 @@ export async function createHideFilesHandle(
   // 等待 workspace 准备就绪
   if (!app.workspace.layoutReady) {
     await new Promise<void>((resolve) => {
-      const ref = app.workspace.on("layout-ready", () => {
+      const ref = (app.workspace as any).on("layout-ready", () => {
         app.workspace.offref(ref);
         resolve();
       });
@@ -237,10 +238,7 @@ export async function createHideFilesHandle(
     }
 
     // 添加到列表（创建新数组以触发 reactivity）
-    (settings as { hiddenNames: string[] }).hiddenNames = [
-      ...settings.hiddenNames,
-      trimmedName,
-    ];
+    settings.hiddenNames = [...settings.hiddenNames, trimmedName];
 
     // 保存并刷新
     await saveSettings();

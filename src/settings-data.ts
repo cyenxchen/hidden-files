@@ -5,14 +5,14 @@ export interface Settings {
   /**
    * 是否启用文件隐藏功能
    */
-  readonly enabled: boolean;
+  enabled: boolean;
 
   /**
    * 要隐藏的文件/目录名称列表
    * - 对于文件：匹配 name（含扩展名）
    * - 对于目录：匹配 name
    */
-  readonly hiddenNames: readonly string[];
+  hiddenNames: string[];
 }
 
 /**

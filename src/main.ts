@@ -110,10 +110,7 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
     }
 
     // 添加到列表
-    (this.settings as { hiddenNames: string[] }).hiddenNames = [
-      ...this.settings.hiddenNames,
-      trimmedName,
-    ];
+    this.settings.hiddenNames = [...this.settings.hiddenNames, trimmedName];
 
     await this.saveSettings();
     this.hideFilesHandle?.refresh();
@@ -123,8 +120,7 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
    * 公共 API: 移除隐藏名称
    */
   async removeHiddenName(name: string): Promise<void> {
-    (this.settings as { hiddenNames: string[] }).hiddenNames =
-      this.settings.hiddenNames.filter((n) => n !== name);
+    this.settings.hiddenNames = this.settings.hiddenNames.filter((n) => n !== name);
 
     await this.saveSettings();
     this.hideFilesHandle?.refresh();
@@ -134,7 +130,7 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
    * 公共 API: 设置启用/禁用
    */
   async setEnabled(enabled: boolean): Promise<void> {
-    (this.settings as { enabled: boolean }).enabled = enabled;
+    this.settings.enabled = enabled;
     await this.saveSettings();
     this.hideFilesHandle?.refresh();
     this.updateRibbonIcon();
