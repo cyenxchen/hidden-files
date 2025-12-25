@@ -19,7 +19,7 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
       await this.loadSettings();
 
       // 初始化隐藏逻辑
-      this.hideFilesHandle = await createHideFilesHandle(
+      this.hideFilesHandle = createHideFilesHandle(
         this.app,
         () => this.settings,
         () => this.saveSettings()

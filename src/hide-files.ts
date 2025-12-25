@@ -175,25 +175,15 @@ function setupContextMenu(
 /**
  * 创建隐藏文件处理句柄
  */
-export async function createHideFilesHandle(
+export function createHideFilesHandle(
   app: App,
   getSettings: () => Settings,
   saveSettings: () => Promise<void>
-): Promise<HideFilesHandle> {
+): HideFilesHandle {
   const disposers: Array<() => void> = [];
   let fileExplorerUnpatch: (() => void) | null = null;
 
-  // 等待 workspace 准备就绪
-  if (!app.workspace.layoutReady) {
-    await new Promise<void>((resolve) => {
-      const ref = (app.workspace as any).on("layout-ready", () => {
-        app.workspace.offref(ref);
-        resolve();
-      });
-    });
-  }
-
-  // 应用 File Explorer Patch（首次 + 延迟创建）
+  // 应用 File Explorer Patch
   const tryApplyFileExplorerPatch = (): boolean => {
     if (fileExplorerUnpatch) return true;
 
@@ -210,23 +200,6 @@ export async function createHideFilesHandle(
     return true;
   };
 
-  if (!tryApplyFileExplorerPatch()) {
-    let layoutChangeRef: EventRef | null = null;
-    const clearLayoutListener = (): void => {
-      if (!layoutChangeRef) return;
-      app.workspace.offref(layoutChangeRef);
-      layoutChangeRef = null;
-    };
-
-    layoutChangeRef = app.workspace.on("layout-change", () => {
-      if (tryApplyFileExplorerPatch()) {
-        clearLayoutListener();
-      }
-    });
-
-    disposers.push(clearLayoutListener);
-  }
-
   // 添加隐藏名称的函数
   async function addHiddenName(name: string): Promise<void> {
     const settings = getSettings();
@@ -237,7 +210,7 @@ export async function createHideFilesHandle(
       return;
     }
 
-    // 添加到列表（创建新数组以触发 reactivity）
+    // 添加到列表
     settings.hiddenNames = [...settings.hiddenNames, trimmedName];
 
     // 保存并刷新
@@ -248,6 +221,27 @@ export async function createHideFilesHandle(
   // 设置右键菜单
   const cleanupMenu = setupContextMenu(app, getSettings, addHiddenName);
   disposers.push(cleanupMenu);
+
+  // 使用 onLayoutReady 确保在 layout 准备好后执行 patch
+  app.workspace.onLayoutReady(() => {
+    if (!tryApplyFileExplorerPatch()) {
+      // File Explorer 可能延迟创建，监听 layout-change
+      let layoutChangeRef: EventRef | null = null;
+      const clearLayoutListener = (): void => {
+        if (!layoutChangeRef) return;
+        app.workspace.offref(layoutChangeRef);
+        layoutChangeRef = null;
+      };
+
+      layoutChangeRef = app.workspace.on("layout-change", () => {
+        if (tryApplyFileExplorerPatch()) {
+          clearLayoutListener();
+        }
+      });
+
+      disposers.push(clearLayoutListener);
+    }
+  });
 
   // 返回句柄
   return {
