@@ -1,0 +1,9 @@
+{
+  "id": "hide-specified-files",
+  "name": "Hide Specified Files",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.11",
+  "description": "Hide user-specified files and folders in the file explorer.",
+  "author": "cyenx",
+  "isDesktopOnly": false
+}

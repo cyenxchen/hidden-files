@@ -1,0 +1,20 @@
+{
+  "name": "obsidian-hide-specified-files",
+  "version": "0.1.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs --watch",
+    "build": "node esbuild.config.mjs --production",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "monkey-around": "^2.3.0"
+  },
+  "devDependencies": {
+    "obsidian": "^1.5.3",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.5.4",
+    "@types/node": "^20.12.12"
+  }
+}
