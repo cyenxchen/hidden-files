@@ -6,6 +6,19 @@ import type { TAbstractFile, TFolder } from "obsidian";
 export type FileExplorerItem = { file: TAbstractFile };
 
 /**
+ * WorkspaceLeaf 的私有/较新 API 类型定义
+ */
+export interface WorkspaceLeafPrivate {
+  view: unknown;
+
+  /**
+   * Obsidian 1.7.2+ 公开 API：视图为 DeferredView 占位时按需实体化。
+   * 老版本没有此方法，使用前必须 typeof 守卫。
+   */
+  loadIfDeferred?: () => Promise<void>;
+}
+
+/**
  * File Explorer View 的私有 API 类型定义
  * 这些是 Obsidian 的内部实现，通过 monkey-patching 访问
  */
