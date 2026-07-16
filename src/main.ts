@@ -144,7 +144,7 @@ export default class HideSpecifiedFilesPlugin extends Plugin {
     this.ribbonIconEl = this.addRibbonIcon(
       iconName,
       "Toggle file hiding",
-      async (evt: MouseEvent) => {
+      async () => {
         await this.setEnabled(!this.settings.enabled);
       }
     );

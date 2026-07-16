@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 import type { Settings } from "./settings-data.js";
 import { refreshFileExplorer } from "./hide-files.js";
 
@@ -17,7 +17,7 @@ export class HideFilesSettingTab extends PluginSettingTab {
   private plugin: PluginRef;
 
   constructor(app: App, plugin: PluginRef) {
-    super(app, plugin as any);
+    super(app, plugin as unknown as Plugin);
     this.plugin = plugin;
   }
 
